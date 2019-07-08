@@ -39,14 +39,14 @@ SECTIONS /*TODO don't initialize useless things,  restore literal loading that u
   .memory : {
     *(.text);
     end = .;
-  } > sdram
+  } > onChipRam
 
   .rodata         :
   {
     *(.rdata)
     *(.rodata .rodata.*)
     *(.gnu.linkonce.r.*)
-  } > sdram
+  } > onChipRam
 
   .ctors          :
   {
@@ -57,7 +57,7 @@ SECTIONS /*TODO don't initialize useless things,  restore literal loading that u
     KEEP (*(.ctors))
     . = ALIGN(4);
     _ctors_end = .;
-  } > sdram
+  } > onChipRam
 
   .data          :
   {
@@ -76,7 +76,7 @@ SECTIONS /*TODO don't initialize useless things,  restore literal loading that u
     *(.srodata.cst4)
     *(.srodata.cst2)
     *(.srodata .srodata.*)
-  } > sdram
+  } > onChipRam
 
   .bss (NOLOAD) : {
 		. = ALIGN(4);
@@ -89,13 +89,13 @@ SECTIONS /*TODO don't initialize useless things,  restore literal loading that u
     *(COMMON)
 		. = ALIGN(4);        
 		_bss_end = .;
-  } > sdram
+  } > onChipRam
   
   .noinit (NOLOAD) : {
       . = ALIGN(4);
       *(.noinit .noinit.*)
       . = ALIGN(4);    
-  } > sdram
+  } > onChipRam
 
 
   ._user_heap (NOLOAD):
@@ -107,7 +107,7 @@ SECTIONS /*TODO don't initialize useless things,  restore literal loading that u
     . = . + _heap_size;
     . = ALIGN(8);
     PROVIDE ( _heap_end = .);
-  } > sdram
+  } > onChipRam
   
   ._stack (NOLOAD):
   {
