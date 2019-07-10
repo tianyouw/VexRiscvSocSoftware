@@ -24,7 +24,7 @@ OUTPUT_ARCH(riscv)
 ENTRY(crtStart)
 
 MEMORY {
-  onChipRam : ORIGIN = 0x80000000, LENGTH = 4K
+  onChipRam : ORIGIN = 0x80000000, LENGTH = 32K
   sdram : ORIGIN = 0x40000000, LENGTH = 128M
 }
 _stack_size = 2k;
@@ -46,7 +46,7 @@ SECTIONS /*TODO don't initialize useless things,  restore literal loading that u
     *(.rdata)
     *(.rodata .rodata.*)
     *(.gnu.linkonce.r.*)
-  } > sdram
+  } > onChipRam
 
   .ctors          :
   {
@@ -57,7 +57,7 @@ SECTIONS /*TODO don't initialize useless things,  restore literal loading that u
     KEEP (*(.ctors))
     . = ALIGN(4);
     _ctors_end = .;
-  } > sdram
+  } > onChipRam
 
   .data          :
   {
@@ -76,7 +76,7 @@ SECTIONS /*TODO don't initialize useless things,  restore literal loading that u
     *(.srodata.cst4)
     *(.srodata.cst2)
     *(.srodata .srodata.*)
-  } > sdram
+  } > onChipRam
 
   .bss (NOLOAD) : {
 		. = ALIGN(4);
@@ -89,7 +89,7 @@ SECTIONS /*TODO don't initialize useless things,  restore literal loading that u
     *(COMMON)
 		. = ALIGN(4);        
 		_bss_end = .;
-  } > sdram
+  } > onChipRam
   
   .noinit (NOLOAD) : {
       . = ALIGN(4);
