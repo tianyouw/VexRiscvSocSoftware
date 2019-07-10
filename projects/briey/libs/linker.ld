@@ -28,7 +28,7 @@ MEMORY {
   sdram : ORIGIN = 0x40000000, LENGTH = 128M
 }
 _stack_size = 2k;
-_heap_size = 0k;
+_heap_size = 64M;
 
 SECTIONS /*TODO don't initialize useless things,  restore literal loading that use 2 instruction in place of onChipRam word */
 {
