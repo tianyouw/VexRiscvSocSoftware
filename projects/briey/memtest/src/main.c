@@ -3,6 +3,7 @@
 
 #define PATTERN  0b10101010u
 
+extern void flushDataCache(); // From /vga/src/crt.S
 extern int _heap_start, _heap_end;
 volatile int state = 0;
 
@@ -39,6 +40,8 @@ void main() {
         heapStart[currByte - 1] = PATTERN + 1; // Cause a failure on even numbered runs
     }
 
+    // Flush D$ before reading back SDRAM
+    flushDataCache();
     currByte = 0;
 
     // Read pattern
