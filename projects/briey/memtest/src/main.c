@@ -31,7 +31,8 @@ void main() {
     // Write pattern
     while(&heapStart[currByte] < heapEnd){
          // Write ~PATTERN on odd indices and PATTERN on even
-        heapStart[currByte++] = (currByte & 1) ? ~PATTERN : PATTERN;
+        heapStart[currByte] = (currByte & 1) ? ~PATTERN : PATTERN;
+        currByte++;
     }
 
     if (state == 1) {
@@ -42,7 +43,7 @@ void main() {
 
     // Read pattern
     while(&heapStart[currByte] < heapEnd) {
-        testByte = heapStart[currByte++];
+        testByte = heapStart[currByte];
         if (testByte != ((currByte & 1) ? ~PATTERN : PATTERN)) {
             fail();
         }
