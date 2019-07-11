@@ -8,7 +8,7 @@ extern int _heap_start, _heap_end;
 volatile uint8_t state = 0;
 
 void fail(){
-    GPIO_A_BASE->OUTPUT = 0xFFFFFFFF ^ 0x04000000; // All red LEDs
+    GPIO_A_BASE->OUTPUT = 0xFFFFFFFF ^ 0x04000000 ^ 0x000000FF; // All red LEDs
     while (1) {};
 }
 
