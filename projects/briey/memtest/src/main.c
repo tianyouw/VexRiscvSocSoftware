@@ -22,33 +22,31 @@ void main() {
 
     uint8_t *heapStart;
     uint8_t *heapEnd;
-    uint32_t currByte = 0;
+    register uint32_t currByte = 0;
+    register uint8_t testByte;
 
     heapStart = (uint8_t*)&_heap_start;
     heapEnd = (uint8_t*)&_heap_end;
 
     // Write pattern
-    while(&heapStart[currByte] < heapEnd) {
-        heapStart[currByte] = PATTERN;
-        heapStart[currByte + 1] = ~PATTERN;
-        currByte = currByte + 2;
+    while(&heapStart[currByte] < heapEnd){
+         // Write ~PATTERN on odd indices and PATTERN on even
+        heapStart[currByte++] = (currByte & 1) ? ~PATTERN : PATTERN;
     }
 
     if (state == 1) {
-        heapStart[currByte] = ~PATTERN; // Cause a failure on even numbered runs
+        heapStart[currByte - 1] = PATTERN + 1; // Cause a failure on even numbered runs
     }
 
     currByte = 0;
 
     // Read pattern
     while(&heapStart[currByte] < heapEnd) {
-        if (heapStart[currByte] != PATTERN) {
+        testByte = heapStart[currByte++];
+        if (testByte != ((currByte & 1) ? ~PATTERN : PATTERN)) {
             fail();
         }
-        if (heapStart[currByte + 1] != ~PATTERN) {
-            fail();
-        }
-        currByte = currByte + 2;
+        currByte++;
     }
 
     pass();
