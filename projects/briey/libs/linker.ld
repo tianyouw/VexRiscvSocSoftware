@@ -27,8 +27,8 @@ MEMORY {
   onChipRam : ORIGIN = 0x80000000, LENGTH = 32K
   sdram : ORIGIN = 0x40000000, LENGTH = 128M
 }
-_stack_size = 2k;
-_heap_size = 64M;
+_stack_size = DEFINED(_stack_size) ? _stack_size : 2K;
+_heap_size = LENGTH(sdram) - _stack_size - SIZEOF(.noinit); /* Fill rest of SDRAM with heap */
 
 SECTIONS /*TODO don't initialize useless things,  restore literal loading that use 2 instruction in place of onChipRam word */
 {
@@ -87,7 +87,7 @@ SECTIONS /*TODO don't initialize useless things,  restore literal loading that u
     *(.bss .bss.*)
     *(.gnu.linkonce.b.*)
     *(COMMON)
-		. = ALIGN(4);        
+		. = ALIGN(4);
 		_bss_end = .;
   } > onChipRam
   

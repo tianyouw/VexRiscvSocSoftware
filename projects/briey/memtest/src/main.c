@@ -5,10 +5,10 @@
 
 extern void flushDataCache(); // From /vga/src/crt.S
 extern int _heap_start, _heap_end;
-volatile int state = 0;
+volatile uint8_t state = 0;
 
 void fail(){
-    GPIO_A_BASE->OUTPUT = 0xFFFFFF00; // All red LEDs
+    GPIO_A_BASE->OUTPUT = 0xFFFFFFFF ^ 0x04000000; // All red LEDs
     while (1) {};
 }
 
@@ -19,7 +19,7 @@ void pass(){
 
 void main() {
     GPIO_A_BASE->OUTPUT_ENABLE = 0xFFFFFFFF;
-    GPIO_A_BASE->OUTPUT = 0x00000000;
+    GPIO_A_BASE->OUTPUT = 0x04000000; // LEDG8
 
     uint8_t *heapStart;
     uint8_t *heapEnd;
@@ -32,11 +32,11 @@ void main() {
     // Write pattern
     while(&heapStart[currByte] < heapEnd) {
         // Write ~PATTERN on odd indices and PATTERN on even
-        heapStart[currByte] = ((currByte & 0x01u) == 0x0) ? PATTERN : (uint8_t) ~PATTERN;
+        heapStart[currByte] = ((currByte & 1u) == 0) ? PATTERN : (uint8_t) ~PATTERN;
         currByte++;
     }
 
-    if (state == 1) {
+    if (state == 1u) {
         heapStart[currByte - 1] = PATTERN + 1; // Cause a failure on even numbered runs
     }
 
@@ -47,7 +47,10 @@ void main() {
     // Read pattern
     while(&heapStart[currByte] < heapEnd) {
         testByte = heapStart[currByte];
-        if (((currByte & 0x01u) == 0x0 && testByte != PATTERN) || (((currByte & 0x01u) == 0x1) && testByte != (uint8_t) ~PATTERN)) {
+        if (((currByte & 1u) == 0) && (testByte != PATTERN)) {
+            fail();
+        }
+        if (((currByte & 1u) == 1) && (testByte != (uint8_t) ~PATTERN)) {
             fail();
         }
         currByte++;
