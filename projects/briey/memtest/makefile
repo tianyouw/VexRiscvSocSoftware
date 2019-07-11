@@ -1,5 +1,5 @@
 PROJ_NAME=memtest
-DEBUG=no
+DEBUG=yes
 BENCH=no
 MULDIV=no
 
