@@ -1,7 +1,7 @@
 #include <stdint.h>
 #include <briey.h>
 
-#define PATTERN  0b10101010u
+#define PATTERN (0b10101010u)
 
 extern void flushDataCache(); // From /vga/src/crt.S
 extern int _heap_start, _heap_end;
