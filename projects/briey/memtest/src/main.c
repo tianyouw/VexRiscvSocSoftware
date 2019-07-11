@@ -1,7 +1,7 @@
 #include <stdint.h>
 #include <briey.h>
 
-#define PATTERN  ((uint8_t) 0b10101010)
+#define PATTERN  0b10101010u
 
 extern int _heap_start, _heap_end;
 volatile int state = 0;
@@ -29,9 +29,9 @@ void main() {
     heapEnd = (uint8_t*)&_heap_end;
 
     // Write pattern
-    while(&heapStart[currByte] < heapEnd){
-         // Write ~PATTERN on odd indices and PATTERN on even
-        heapStart[currByte] = (currByte & 1) ? ~PATTERN : PATTERN;
+    while(&heapStart[currByte] < heapEnd) {
+        // Write ~PATTERN on odd indices and PATTERN on even
+        heapStart[currByte] = ((currByte & 0x01u) == 0x0) ? PATTERN : (uint8_t) ~PATTERN;
         currByte++;
     }
 
@@ -44,7 +44,7 @@ void main() {
     // Read pattern
     while(&heapStart[currByte] < heapEnd) {
         testByte = heapStart[currByte];
-        if (testByte != ((currByte & 1) ? ~PATTERN : PATTERN)) {
+        if (((currByte & 0x01u) == 0x0 && testByte != PATTERN) || (((currByte & 0x01u) == 0x1) && testByte != (uint8_t) ~PATTERN)) {
             fail();
         }
         currByte++;
