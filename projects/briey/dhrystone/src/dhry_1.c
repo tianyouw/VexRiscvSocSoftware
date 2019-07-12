@@ -289,6 +289,8 @@ main2 ()
     if(dmipsReal < 10) printf("0");
     printf ("%d", dmipsReal);
     printf ("\n");
+    GPIO_A_BASE->OUTPUT = (uint32_t)dmipsReal | ((uint32_t)dmipsNatural << 8);
+    // GPIO_A_BASE->OUTPUT = dmipsNatural;
   }
   
 }

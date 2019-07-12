@@ -7,6 +7,9 @@
 extern void main2();
 
 int main() {
+	GPIO_A_BASE->OUTPUT_ENABLE = 0xFFFFFFFF;
+    GPIO_A_BASE->OUTPUT = 0x00000001;
+
 	Uart_Config uartConfig;
 	uartConfig.dataLength = 8;
 	uartConfig.parity = NONE;

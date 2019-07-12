@@ -24,11 +24,11 @@ OUTPUT_ARCH(riscv)
 ENTRY(crtStart)
 
 MEMORY {
-  onChipRam (W!RX)/*(RX)*/ : ORIGIN = 0x80000000, LENGTH = 4K
-  sdram (W!RX) : ORIGIN = 0x40000000, LENGTH = 64M
+  onChipRam : ORIGIN = 0x80000000, LENGTH = 32K
+  sdram : ORIGIN = 0x40000000, LENGTH = 128M
 }
-_stack_size = 2k;
-_heap_size = 0k;
+_stack_size = DEFINED(_stack_size) ? _stack_size : 2K;
+_heap_size = LENGTH(sdram) - _stack_size - SIZEOF(.noinit); /* Fill rest of SDRAM with heap */
 
 SECTIONS /*TODO don't initialize useless things,  restore literal loading that use 2 instruction in place of onChipRam word */
 {
@@ -87,7 +87,7 @@ SECTIONS /*TODO don't initialize useless things,  restore literal loading that u
     *(.bss .bss.*)
     *(.gnu.linkonce.b.*)
     *(COMMON)
-		. = ALIGN(4);        
+		. = ALIGN(4);
 		_bss_end = .;
   } > onChipRam
   
@@ -95,7 +95,7 @@ SECTIONS /*TODO don't initialize useless things,  restore literal loading that u
       . = ALIGN(4);
       *(.noinit .noinit.*)
       . = ALIGN(4);    
-  } > onChipRam
+  } > sdram
 
 
   ._user_heap (NOLOAD):
@@ -107,7 +107,7 @@ SECTIONS /*TODO don't initialize useless things,  restore literal loading that u
     . = . + _heap_size;
     . = ALIGN(8);
     PROVIDE ( _heap_end = .);
-  } > onChipRam
+  } > sdram
   
   ._stack (NOLOAD):
   {
@@ -116,7 +116,7 @@ SECTIONS /*TODO don't initialize useless things,  restore literal loading that u
     . = . + _stack_size;
     . = ALIGN(16);
     PROVIDE (_stack_start = .);
-  } > onChipRam
+  } > sdram
 
 
 }
