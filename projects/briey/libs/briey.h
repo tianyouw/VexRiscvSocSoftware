@@ -15,7 +15,7 @@
 #include "vga.h"
 #include "gpio.h"
 
-#define CORE_HZ 50000000
+#define CORE_HZ (50000000U)
 
 #define GPIO_A_BASE    ((Gpio_Reg*)(0xF0000000))
 #define GPIO_B_BASE    ((Gpio_Reg*)(0xF0001000))

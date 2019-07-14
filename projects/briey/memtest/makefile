@@ -5,9 +5,10 @@ BENCH=no
 MULDIV=no
 
 
-SRCS = 	$(wildcard src/*.c) \
-        $(wildcard src/*.cpp)  \
-        $(wildcard src/*.S)
+SRCS = 	$(wildcard src/*.c)   \
+        $(wildcard src/*.cpp) \
+        $(wildcard src/*.S)   \
+        ../libs/stdlib.c
 
 LDSCRIPT = ../libs/linker.ld
 INC += -I../../../libs/
