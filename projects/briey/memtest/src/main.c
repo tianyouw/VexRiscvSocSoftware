@@ -12,7 +12,7 @@ extern int _heap_start, _heap_end;
 volatile uint8_t state = 0;
 
 void fail(uint32_t errorAddr){
-    GPIO_A_BASE->OUTPUT = (0xFFFFFFFF ^ 0x04000000 ) ^ 0x000000FF; // All red LEDs
+    GPIO_A_BASE->OUTPUT = ~0x04000000 | ~0x000000FF; // All red LEDs (not LEDG[8], not LEDG[7:0])
     printf("Error detected at addr %d\r\n", errorAddr);
     while (1) {};
 }
@@ -27,12 +27,12 @@ void main() {
     GPIO_A_BASE->OUTPUT_ENABLE = 0xFFFFFFFF;
     GPIO_A_BASE->OUTPUT = 0x04000000; // LEDG8
 
-	Uart_Config uartConfig;
-	uartConfig.dataLength = UART_DATA_LEN;
-	uartConfig.parity = NONE;
-	uartConfig.stop = ONE;
-	uartConfig.clockDivider = (CORE_HZ / UART_DATA_LEN / UART_BAUD) - 1;
-	uart_applyConfig(UART,&uartConfig);
+    Uart_Config uartConfig;
+    uartConfig.dataLength = UART_DATA_LEN;
+    uartConfig.parity = NONE;
+    uartConfig.stop = ONE;
+    uartConfig.clockDivider = (CORE_HZ / UART_DATA_LEN / UART_BAUD) - 1;
+    uart_applyConfig(UART,&uartConfig);
 
     uint8_t *heapStart;
     uint8_t *heapEnd;
