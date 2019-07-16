@@ -12,7 +12,7 @@ extern int _heap_start, _heap_end;
 volatile uint8_t state = 0;
 
 void fail(uint32_t errorAddr){
-    GPIO_A_BASE->OUTPUT = ~0x04000000 | ~0x000000FF; // All red LEDs (not LEDG[8], not LEDG[7:0])
+    GPIO_A_BASE->OUTPUT = ~0x000000FF ^ 0x04000000; // All red LEDs (not LEDG[7:0], and toggle LEDG[8])
     printf("Error detected at addr %d\r\n", errorAddr);
     while (1) {};
 }
