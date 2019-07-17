@@ -70,7 +70,7 @@ static void printf_x(int val)
 
     while (len--) {
         hexChar = myVal & 0x0F; // Mask least sig. hex digit
-        *(p++) = hexChar > 9 ? (hexChar + 'a' - 10) : (hexChar + '0');
+        *(p++) = hexChar > 9 ? (hexChar + 'A' - 10) : (hexChar + '0');
         myVal = myVal / 16;
     }
     while (p != buffer)
