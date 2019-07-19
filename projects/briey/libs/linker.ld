@@ -28,8 +28,8 @@ MEMORY {
   sdram : ORIGIN = 0x40000000, LENGTH = 128M
 }
 _stack_size = DEFINED(_stack_size) ? _stack_size : 2K;
-_heap_size = LENGTH(sdram) - _stack_size - _memTree_size - SIZEOF(.noinit); /* Fill rest of SDRAM with heap */
 _memTree_size = LENGTH(sdram) / 2 ; /* Size of mem. auth. tree */
+_heap_size = LENGTH(sdram) - _stack_size - _memTree_size - SIZEOF(.noinit); /* Fill rest of SDRAM with heap */
 
 SECTIONS /*TODO don't initialize useless things,  restore literal loading that use 2 instruction in place of onChipRam word */
 {
