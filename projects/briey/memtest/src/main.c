@@ -3,6 +3,7 @@
 #include <stdio.h>
 #include <briey.h>
 
+// TODO: add flag for byte vs word tests
 #define PATTERN       (0x55555555U) // Repeating 0b0101...
 
 #define UART_DATA_LEN (8U)
@@ -54,24 +55,27 @@ void main() {
     printf("treeEnd:   0x%x\r\n", treeEnd);
 
     printf("MemTest BEGIN\r\n");
-    printf("Testing 0x%x bytes of tree\r\n", (uint8_t *)treeEnd - (uint8_t *)treeStart);
-    printf("Should all be zeroed before main() is called\r\n");
-    // Flush D$ before reading back SDRAM
-    flushDataCache();
 
-    printf("Reading...\r\n");
-    // Read pattern
-    while(&treeStart[currWord] < treeEnd) {
-        testWord = treeStart[currWord];
-        if (testWord != 0U) {
-            printf("Read back 0x%x, should be 0x%x\r\n", testWord, 0);
-            fail(&treeStart[currWord]);
+    #ifndef NO_TREE_TEST // Set TREE=no in memtest/makefile to also disable tree region zeroing
+        printf("Testing 0x%x bytes of tree\r\n", (uint8_t *)treeEnd - (uint8_t *)treeStart);
+        printf("Should all be zeroed before main() is called\r\n");
+        // Flush D$ before reading back SDRAM
+        flushDataCache();
+
+        printf("Reading...\r\n");
+        // Read pattern
+        while(&treeStart[currWord] < treeEnd) {
+            testWord = treeStart[currWord];
+            if (testWord != 0U) {
+                printf("Read back 0x%x, should be 0x%x\r\n", testWord, 0);
+                fail(&treeStart[currWord]);
+            }
+            currWord++;
         }
-        currWord++;
-    }
 
-    treePass();
-    currWord = 0;
+        treePass();
+        currWord = 0;
+    #endif // NO_TREE_INIT
 
     printf("Testing 0x%x bytes of heap\r\n", (uint8_t *)heapEnd - (uint8_t *)heapStart);
     printf("Writing...\r\n");

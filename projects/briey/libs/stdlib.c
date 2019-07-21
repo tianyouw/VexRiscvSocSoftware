@@ -74,7 +74,7 @@ static void printf_x(int val)
         myVal = myVal / 16;
     }
     while (p != buffer)
-        printf("%c", *(--p));
+        printf_c(*(--p));
 }
 
 int printf(const char *format, ...)

@@ -70,16 +70,18 @@ bss_loop:
   j bss_loop
 bss_done:
 
-// Initialize the memory authentication tree to 0s
-memTree_init:
-  la a0, _memTree_start
-  la a1, _memTree_end
-memTree_loop:
-  beq a0,a1,memTree_done
-  sw zero,0(a0)
-  add a0,a0,4
-  j memTree_loop
-memTree_done:
+#ifndef NO_TREE_INIT
+  // Initialize the memory authentication tree to 0s
+  memTree_init:
+    la a0, _memTree_start
+    la a1, _memTree_end
+  memTree_loop:
+    beq a0,a1,memTree_done
+    sw zero,0(a0)
+    add a0,a0,4
+    j memTree_loop
+  memTree_done:
+#endif // NO_TREE
 
 ctors_init:
   la a0, _ctors_start
