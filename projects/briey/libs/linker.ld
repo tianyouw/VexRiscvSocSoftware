@@ -28,7 +28,8 @@ MEMORY {
   sdram : ORIGIN = 0x40000000, LENGTH = 128M
 }
 _stack_size = DEFINED(_stack_size) ? _stack_size : 2K;
-_heap_size = LENGTH(sdram) - _stack_size - SIZEOF(.noinit); /* Fill rest of SDRAM with heap */
+_memTree_size = LENGTH(sdram) / 2 ; /* Size of mem. auth. tree */
+_heap_size = LENGTH(sdram) - _stack_size - _memTree_size - SIZEOF(.noinit); /* Fill rest of SDRAM with heap */
 
 SECTIONS /*TODO don't initialize useless things,  restore literal loading that use 2 instruction in place of onChipRam word */
 {
@@ -79,24 +80,23 @@ SECTIONS /*TODO don't initialize useless things,  restore literal loading that u
   } > onChipRam
 
   .bss (NOLOAD) : {
-		. = ALIGN(4);
-		/* This is used by the startup in order to initialize the .bss secion */
-		_bss_start = .;
+    . = ALIGN(4);
+    /* This is used by startup routine (crt.S) to initialize the .bss section */
+    _bss_start = .;
     *(.sbss*)
     *(.gnu.linkonce.sb.*)
     *(.bss .bss.*)
     *(.gnu.linkonce.b.*)
     *(COMMON)
-		. = ALIGN(4);
-		_bss_end = .;
+    . = ALIGN(4);
+    _bss_end = .;
   } > onChipRam
-  
+
   .noinit (NOLOAD) : {
       . = ALIGN(4);
       *(.noinit .noinit.*)
       . = ALIGN(4);    
   } > sdram
-
 
   ._user_heap (NOLOAD):
   {
@@ -108,7 +108,7 @@ SECTIONS /*TODO don't initialize useless things,  restore literal loading that u
     . = ALIGN(8);
     PROVIDE ( _heap_end = .);
   } > sdram
-  
+
   ._stack (NOLOAD):
   {
     . = ALIGN(16);
@@ -118,5 +118,12 @@ SECTIONS /*TODO don't initialize useless things,  restore literal loading that u
     PROVIDE (_stack_start = .);
   } > sdram
 
-
+  .memTree (NOLOAD) : {
+    . = ALIGN(4);
+    /* This is used by the startup routine (crt.S) to initialize the .memTree section (for mem. auth.) */
+    PROVIDE ( _memTree_start = . );
+    . = . + _memTree_size;
+    . = ALIGN(4);
+    PROVIDE ( _memTree_end = . );
+  } > sdram
 }

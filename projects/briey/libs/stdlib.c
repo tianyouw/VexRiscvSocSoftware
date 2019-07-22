@@ -43,17 +43,35 @@ static void printf_s(char *p)
         putchar(*(p++));
 }
 
-static void printf_d(int val)
+static void printf_d(int val, int isSigned)
 {
     char buffer[32];
     char *p = buffer;
-    if (val < 0) {
+    if ((val < 0) && isSigned) {
         printf_c('-');
         val = -val;
     }
-    while (val || p == buffer) {
-        *(p++) = '0' + val % 10;
-        val = val / 10;
+    uint32_t myVal = (uint32_t) val;
+    while (myVal || p == buffer) {
+        *(p++) = '0' + myVal % 10;
+        myVal = myVal / 10;
+    }
+    while (p != buffer)
+        printf_c(*(--p));
+}
+
+static void printf_x(int val)
+{
+    char buffer[32];
+    char hexChar;
+    char *p = buffer;
+    uint32_t myVal = (uint32_t) val;
+    uint32_t len = 8;
+
+    while (len--) {
+        hexChar = myVal & 0x0F; // Mask least sig. hex digit
+        *(p++) = hexChar > 9 ? (hexChar + 'A' - 10) : (hexChar + '0');
+        myVal = myVal / 16;
     }
     while (p != buffer)
         printf_c(*(--p));
@@ -78,7 +96,15 @@ int printf(const char *format, ...)
                     break;
                 }
                 if (format[i] == 'd') {
-                    printf_d(va_arg(ap,int));
+                    printf_d(va_arg(ap,int), 1);
+                    break;
+                }
+                if (format[i] == 'u') {
+                    printf_d(va_arg(ap,int), 0);
+                    break;
+                }
+                if (format[i] == 'x') {
+                    printf_x(va_arg(ap,int));
                     break;
                 }
             }

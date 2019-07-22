@@ -3,7 +3,13 @@ DEBUG=no
 NO_OPT=yes
 BENCH=no
 MULDIV=no
+# "yes" enables tree mem test and tree zeroing
+# run "make tree=no" to disable this
+TREE=yes
 
+ifeq ($(TREE),no)
+	CFLAGS += -DNO_TREE_TEST -DNO_TREE_INIT
+endif
 
 SRCS = 	$(wildcard src/*.c)   \
         $(wildcard src/*.cpp) \

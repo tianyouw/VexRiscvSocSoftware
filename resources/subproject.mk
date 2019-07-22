@@ -24,6 +24,8 @@ RISCV_OBJCOPY = $(RISCV_PATH)/bin/$(RISCV_NAME)-objcopy
 RISCV_OBJDUMP = $(RISCV_PATH)/bin/$(RISCV_NAME)-objdump
 RISCV_CC=$(RISCV_PATH)/bin/$(RISCV_NAME)-gcc
 
+VEXRISCV_HEX = ../../../../VexRiscv/src/main/ressource/hex
+
 CFLAGS +=  -MD -fstrict-volatile-bitfields -Wall -Wno-unused-function -Wno-main
 LDFLAGS +=  -nostdlib -lgcc -mcmodel=medany -nostartfiles -ffreestanding -Wl,-Bstatic,-T,$(LDSCRIPT),-Map,$(OBJDIR)/$(PROJ_NAME).map,--print-memory-usage
 #LDFLAGS += -lgcc -lc -lg -nostdlib  -lgcc  -msave-restore    --strip-debug, 
@@ -43,6 +45,7 @@ $(OBJDIR)/%.elf: $(OBJS) | $(OBJDIR)
 
 %.hex: %.elf
 	$(RISCV_OBJCOPY) -O ihex $^ $@
+	if [ -d "$(VEXRISCV_HEX)" ]; then cp $@ $(VEXRISCV_HEX); fi
 
 %.bin: %.elf
 	$(RISCV_OBJCOPY) -O binary $^ $@
