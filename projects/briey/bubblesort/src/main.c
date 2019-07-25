@@ -8,6 +8,7 @@
 #define UART_DATA_LEN (8U)
 #define UART_BAUD     (115200U)
 
+extern void flushDataCache(); // From /vga/src/crt.S
 extern char _heap_start, _heap_end, _memTree_start, _memTree_end;
 static const uint32_t inputArray[SORT_SIZE] = {80, 82, 9, 69, 43, 7, 59, 12, 78, 26, 35, 50, 62, 3, 88, 14};
 
@@ -42,7 +43,10 @@ void bubbleSort(uint32_t array[], uint32_t size) {
            if (array[j - 1] > array[j]) {
                 temp = array[j - 1];
                 array[j - 1] = array[j];
+                // Flush the cache after every write to throughly test the SDRAM
+                flushDataCache();
                 array[j] = temp;
+                flushDataCache();
            }
            iter++;
         }
@@ -86,6 +90,8 @@ void main() {
     printArray(sortArray, SORT_SIZE);
     printf("\r\n");
 
+    // Flush the cache before reading back the sorted array
+    flushDataCache();
     test(sortArray, SORT_SIZE);
 }
 
