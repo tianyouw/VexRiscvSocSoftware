@@ -18,6 +18,10 @@ ifeq ($(TREE),no)
 	CFLAGS += -DNO_TREE_TEST -DNO_TREE_INIT
 endif
 
+ifeq ($(VAR_SIZE),byte)
+	CFLAGS += -DUSE_BYTES
+endif
+
 ifeq ($(SIFIVE_GCC_PACK),yes)
 	RISCV_CLIB=$(RISCV_PATH)/$(RISCV_NAME)/lib/$(MARCH)/$(MABI)/
 else
