@@ -53,7 +53,7 @@ void bubbleSort(uint32_t array[], uint32_t size) {
 
 void printArray(uint32_t array[], uint32_t size) {
     printf("[%d", array[0]);
-    for (uint32_t i = 1; i < SORT_SIZE; i++) {
+    for (uint32_t i = 1; i < size; i++) {
         printf(", %d", array[i]);
     }
     printf("]\r\n");
