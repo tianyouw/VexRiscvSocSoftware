@@ -6,7 +6,7 @@ MULDIV=no
 
 # "yes" enables tree mem test and tree zeroing
 # run "make tree=no" to disable this
-TREE=yes
+TREE=no
 
 # "byte"/"word" sets memtest to use byte/word sized transfers
 VAR_SIZE=byte

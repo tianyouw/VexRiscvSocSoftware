@@ -86,8 +86,8 @@ void main() {
 
     printf("Testing 0x%x bytes of heap\r\n", (uint8_t *)heapEnd - (uint8_t *)heapStart);
 
-    // Write pattern, flush cache, read pattern, repeat until end of heap
-    while(&heapStart[currDataIdx] < heapEnd) {
+    // Write pattern, flush cache, read pattern, repeat for 32 data units
+    while(&heapStart[currDataIdx] < heapStart + 32) {
         // Write ~PATTERN on odd indices and PATTERN on even
         currPattern = ((currDataIdx & 1U) == 0) ? PATTERN : (TEST_T) ~PATTERN;
         heapStart[currDataIdx] = currPattern;
