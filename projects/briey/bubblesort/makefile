@@ -1,4 +1,4 @@
-PROJ_NAME=memtest
+PROJ_NAME=bubblesort
 DEBUG=no
 NO_OPT=yes
 BENCH=no

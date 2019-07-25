@@ -7,6 +7,7 @@
 
 #include <stdarg.h>
 #include <stdint.h>
+#include <stddef.h>
 #include "briey.h"
 
 extern char *malloc();
@@ -30,6 +31,17 @@ char *malloc(int size)
     if (heap_memory_used > &_heap_size)
         asm volatile ("ebreak");
     return p;
+}
+
+// From libgcc
+void *memcpy(void *dest, const void *src, size_t len)
+{
+    char *d = dest;
+    const char *s = src;
+
+    while (len--)
+        *d++ = *s++;
+    return dest;
 }
 
 static void printf_c(int c)
