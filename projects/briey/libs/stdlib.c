@@ -36,8 +36,8 @@ char *malloc(int size)
 // From libgcc
 void *memcpy(void *dest, const void *src, size_t len)
 {
-    char *d = dest;
-    const char *s = src;
+    uint8_t *d = dest;
+    const uint8_t *s = src;
 
     while (len--)
         *d++ = *s++;
