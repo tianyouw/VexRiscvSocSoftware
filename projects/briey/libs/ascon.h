@@ -20,7 +20,6 @@ struct ascon_param {
 };
 
 int ascon_is_sane(void);
-int ascon_is_busy(void);
 void ascon_encrypt(struct ascon_param *param);
 void ascon_decrypt(struct ascon_param *param);
 

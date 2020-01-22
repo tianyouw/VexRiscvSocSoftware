@@ -31,17 +31,6 @@ int ascon_is_sane(void)
 	return ASCON128_INTERFACE->unique_value == UNIQUE_VALUE;
 }
 
-int ascon_is_busy(void)
-{
-	return ASCON128_INTERFACE->status;
-}
-
-static inline void ascon_busy_wait(void)
-{
-	while (ascon_is_busy())
-		;
-}
-
 static void ascon_memcpy(volatile uint32_t *restrict dest, const volatile uint32_t *restrict src, size_t size)
 {
 	size /= sizeof(*src);
@@ -54,25 +43,21 @@ static void ascon_operation(struct ascon_param *param, uint32_t op, uint32_t op_
 {
 	size_t i;
 
-	ascon_busy_wait();
 	ascon_memcpy(ASCON128_INTERFACE->key, param->key, sizeof(ASCON128_INTERFACE->key));
 	ASCON128_INTERFACE->control = ASCON_CTRL_INIT;
 
 	for (i = 0; i < param->associated_size; ++i) {
-		ascon_busy_wait();
 		ascon_memcpy(ASCON128_INTERFACE->data, param->associated[i], sizeof(ASCON128_INTERFACE->data));
 		ASCON128_INTERFACE->control = (i == param->associated_size - 1) ? ASCON_CTRL_ASSOCIATE_FINAL : ASCON_CTRL_ASSOCIATE;
 	}
 
 	for (i = 0; i < param->data_size; ++i) {
-		ascon_busy_wait();
 		if (i) {
 			ascon_memcpy(param->data_out[i-1], ASCON128_INTERFACE->data, sizeof(param->data_in[i-1]));
 		}
 		ascon_memcpy(ASCON128_INTERFACE->data, param->data_in[i], sizeof(ASCON128_INTERFACE->data));
 		ASCON128_INTERFACE->control = (i == param->data_size - 1) ? op_final : op;
 	}
-	ascon_busy_wait();
 	ascon_memcpy(param->data_out[i-1], ASCON128_INTERFACE->data, sizeof(param->data_in[i-1]));
 	ascon_memcpy(param->nonce, ASCON128_INTERFACE->nonce, sizeof(param->nonce));
 }
