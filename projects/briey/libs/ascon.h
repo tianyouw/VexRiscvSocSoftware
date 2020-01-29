@@ -11,11 +11,11 @@ typedef uint32_t ascon_nonce_t[BITS_TO_UINT32(128)];
 
 struct ascon_param {
 	ascon_key_t key;
-	const uint32_t *(associated[2]);
+	const uint32_t *(associated[4]);
 	size_t associated_size;
-	const uint32_t *(data_in[2]);
+	const uint32_t *(data_in[4]);
 	size_t data_size;
-	uint32_t *(data_out[2]);
+	uint32_t *(data_out[4]);
 	ascon_nonce_t nonce;
 };
 

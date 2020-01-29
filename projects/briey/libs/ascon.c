@@ -11,8 +11,7 @@ static volatile struct {
 	uint32_t scheduled_status;
 	uint32_t key[4];
 	uint32_t nonce[4];
-	uint32_t data[2];
-	uint32_t filler2[2];
+	uint32_t data[4];
 	uint32_t tag[4];
 } *const ASCON128_INTERFACE = (volatile void *) 0x40000000;
 
