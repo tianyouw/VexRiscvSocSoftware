@@ -9,11 +9,10 @@ static volatile struct {
 	uint32_t status;
 	uint32_t control;
 	uint32_t scheduled_status;
-	uint32_t key[4];
-	uint32_t nonce[4];
-	uint32_t data[2];
-	uint32_t filler2[2];
-	uint32_t tag[4];
+	uint32_t key[WIDE_LEN];
+	uint32_t nonce[WIDE_LEN];
+	uint32_t data[WIDE_LEN];
+	uint32_t tag[WIDE_LEN];
 } *const ASCON128_INTERFACE = (volatile void *) 0x40000000;
 
 #define ASCON_CTRL_INIT (1U << 0)
