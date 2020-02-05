@@ -10,7 +10,7 @@ debugpermutation = False
 
 # === Ascon encryption and decryption ===
 
-def ascon_encrypt(key, nonce, associateddata, plaintext, variant="Ascon-128"): 
+def ascon_encrypt(key, nonce, associateddata, plaintext, variant="Ascon-128"):
     """
     Ascon encryption.
     key: a bytes object of size 16 (for 128-bit security)
@@ -66,7 +66,7 @@ def ascon_decrypt(key, nonce, associateddata, ciphertext, variant="Ascon-128"):
 
 def ascon_initialize(S, k, rate, a, b, key, nonce):
     """
-    Ascon initialization phase. 
+    Ascon initialization phase.
     S: Ascon state, a list of 5 64-bit integers
     k: key size in bits
     rate: block size in bytes (8 for Ascon-128, 16 for Ascon-128a)
@@ -94,7 +94,7 @@ def ascon_initialize(S, k, rate, a, b, key, nonce):
 
 def ascon_process_associated_data(S, b, rate, associateddata):
     """
-    Ascon associated data processing phase. 
+    Ascon associated data processing phase.
     S: Ascon state, a list of 5 64-bit integers
     b: number of intermediate rounds for permutation
     rate: block size in bytes (8 for Ascon-128, 16 for Ascon-128a)
@@ -119,7 +119,7 @@ def ascon_process_associated_data(S, b, rate, associateddata):
 
 def ascon_process_plaintext(S, b, rate, plaintext):
     """
-    Ascon plaintext processing phase (during encryption). 
+    Ascon plaintext processing phase (during encryption).
     S: Ascon state, a list of 5 64-bit integers
     b: number of intermediate rounds for permutation
     rate: block size in bytes (8 for Ascon-128, 16 for Ascon-128a)
@@ -158,7 +158,7 @@ def ascon_process_plaintext(S, b, rate, plaintext):
 
 def ascon_process_ciphertext(S, b, rate, ciphertext):
     """
-    Ascon ciphertext processing phase (during decryption). 
+    Ascon ciphertext processing phase (during decryption).
     S: Ascon state, a list of 5 64-bit integers
     b: number of intermediate rounds for permutation
     rate: block size in bytes (8 for Ascon-128, 16 for Ascon-128a)
@@ -312,17 +312,17 @@ if __name__ == "__main__":
     ciphertext = ascon_encrypt(key, nonce, associateddata, plaintext, variant)
     receivedplaintext = ascon_decrypt(key, nonce, associateddata, ciphertext, variant)
 
-    if receivedplaintext == None: 
+    if receivedplaintext == None:
         print "verification failed!"
-        
+
     data = [
-            ("key", key), 
-            ("nonce", nonce), 
-            ("plaintext", plaintext), 
-            ("ass.data", associateddata), 
-            ("ciphertext", ciphertext[:-len(key)]), 
-            ("tag", ciphertext[-len(key):]), 
-            ("received", receivedplaintext), 
+            ("key", key),
+            ("nonce", nonce),
+            ("plaintext", plaintext),
+            ("ass.data", associateddata),
+            ("ciphertext", ciphertext[:-len(key)]),
+            ("tag", ciphertext[-len(key):]),
+            ("received", receivedplaintext),
            ]
     maxlen = max([len(text) for (text, val) in data])
     for text, val in data:
