@@ -1,5 +1,9 @@
 #!/usr/bin/env python
 
+import argparse
+import string
+import sys
+
 """
 Implementation of Ascon v1.2, an authenticated cipher
 http://ascon.iaik.tugraz.at/
@@ -295,35 +299,27 @@ def printwords(S, description=""):
     print "\n".join(["  x{i}={s:016x}".format(**locals()) for i, s in enumerate(S)])
 
 
-# === some demo if called directly ===
+VARIANTS = ["Ascon-128", "Ascon-128a"]
+keysize = 16
+
+def main():
+    parser = argparse.ArgumentParser(description="Run ASCON on some stuff.")
+    parser.add_argument("--variant", default=VARIANTS[0], choices=VARIANTS)
+    parser.add_argument("-k", "--key", required=True)
+    parser.add_argument("--associated-data", type=bytes, default=b"")
+    operation = parser.add_mutually_exclusive_group(required=True)
+    operation.add_argument("-e", "--encrypt", action='store_const', const=ascon_encrypt)
+    operation.add_argument("-d", "--decrypt", action='store_const', const=ascon_decrypt)
+    args = parser.parse_args()
+
+    key = args.key.decode("hex")
+    nonce = zero_bytes(keysize)
+    data = bytearray.fromhex("".join(c for c in sys.stdin.read() if c in string.hexdigits))
+
+    processed = (args.encrypt or args.decrypt)(args.key, nonce, args.associated_data, data, args.variant)
+    print(bytes_to_hex(processed))
+
+    return 0
 
 if __name__ == "__main__":
-    variant = "Ascon-128"  # or "Ascon-128a"
-    keysize = 16
-    print "=== demo encryption using {variant} ===".format(variant=variant)
-
-    key = zero_bytes(keysize)
-    nonce = zero_bytes(keysize)
-    #key = get_random_bytes(keysize)
-    #nonce = get_random_bytes(keysize)
-    associateddata = b"ASCON"
-    plaintext = b"ascon"
-
-    ciphertext = ascon_encrypt(key, nonce, associateddata, plaintext, variant)
-    receivedplaintext = ascon_decrypt(key, nonce, associateddata, ciphertext, variant)
-
-    if receivedplaintext == None:
-        print "verification failed!"
-
-    data = [
-            ("key", key),
-            ("nonce", nonce),
-            ("plaintext", plaintext),
-            ("ass.data", associateddata),
-            ("ciphertext", ciphertext[:-len(key)]),
-            ("tag", ciphertext[-len(key):]),
-            ("received", receivedplaintext),
-           ]
-    maxlen = max([len(text) for (text, val) in data])
-    for text, val in data:
-        print "{text}:{align} 0x{val} ({length} bytes)".format(text=text, align=((maxlen - len(text)) * " "), val=bytes_to_hex(val), length=len(val))
+    sys.exit(main())
