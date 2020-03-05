@@ -29,7 +29,7 @@ extern void flushDataCache(uint32_t dummy);
 int main() {
 	Uart_Config uartConfig;
 	uartConfig.dataLength = 8;
-	uartConfig.parity = NONE;
+	uartConfig.parity = ODD;
 	uartConfig.stop = ONE;
 	uartConfig.clockDivider = 50000000/8/115200-1;
 	uart_applyConfig(UART,&uartConfig);
@@ -41,32 +41,61 @@ int main() {
     vga_run(VGA_BASE);
 
     uint16_t read_data;
-    uint32_t y = 0;
-    uint32_t x = 0;
-    uint16_t *ptr = &vgaFramebuffer[0][0];
+    // uint32_t y = 0;
+    // uint32_t x = 0;
+    // uint16_t *ptr = &vgaFramebuffer[0][0];
 
-    flushDataCache(0);
+    // flushDataCache(0);
 
-    while (1) {
-        read_data = uart_read(UART);
-        read_data = (uart_read(UART) << 8) | read_data;
-        // uart_write(UART, read_data);
+    // while (1) {
+    //     read_data = uart_read(UART);
+    //     read_data = (uart_read(UART) << 8) | read_data;
+    //     // uart_write(UART, read_data);
 
-        *ptr = read_data;
-        if (y < RES_Y && x < RES_X) ptr++;
+    //     *ptr = read_data;
+    //     if (y < RES_Y && x < RES_X) ptr++;
 
-        x++;
-        if (x > RES_X) x = 0;
+    //     x++;
+    //     if (x > RES_X) x = 0;
         
-        y++;
-        if (y > RES_Y) {
-            y = 0;
-            x = 0;
+    //     y++;
+    //     if (y > RES_Y) {
+    //         y = 0;
+    //         x = 0;
             
-            flushDataCache(0);
-            *ptr = &vgaFramebuffer[0][0];
+    //         flushDataCache(0);
+    //         *ptr = &vgaFramebuffer[0][0];
+    //     }
+
+    while(1){
+        uint16_t *ptr = &vgaFramebuffer[0][0];
+        uint16_t tmp;
+
+        for(uint32_t y = 0;y < RES_Y;y++){
+            for(uint32_t x = 0;x < RES_X;x++){
+                // read_data = uart_read(UART);
+                // read_data = (uart_read(UART) << 8) | read_data;
+
+                read_data = uart_read(UART);                    // B
+                read_data = (read_data << 6) | uart_read(UART); // G
+                read_data = (read_data << 5) | uart_read(UART); // R
+
+                // divide green by half
+                // tmp = (read_data & 0x000007C0) >> 6;
+                // tmp = tmp << 5;
+                // read_data = read_data & !0x000007C0;
+                // read_data = read_data | tmp;
+
+                // uart_write(UART, read_data);
+
+                *ptr = read_data;
+
+                ptr++;
+            }
         }
+        flushDataCache(0);
     }
+    // while(1) {}
 
     // OLD STUFF
     // uint32_t offset = 0;
@@ -117,7 +146,7 @@ int main() {
     // 	uart_write(UART, '\n');
     //     rgb_count++;
     // // }
-    while(1) {}
+    // while(1) {}
 }
 
 
