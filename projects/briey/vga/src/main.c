@@ -46,6 +46,7 @@ int main() {
     while(1){
         uint16_t *ptr = &vgaFramebuffer[0][0];
 
+        // input images should be 320x240, and will be tiled automatically
         for(uint32_t y = 0;y < RES_Y/2;y++){
             for(uint32_t x = 0;x < RES_X/2;x++){
                 read_data = uart_read(UART);
