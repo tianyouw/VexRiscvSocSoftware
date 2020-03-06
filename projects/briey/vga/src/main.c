@@ -40,64 +40,33 @@ int main() {
     VGA_BASE->FRAME_BASE = (uint32_t)vgaFramebuffer;
     vga_run(VGA_BASE);
 
+    int quarter_offset = (RES_Y * RES_X) / 4;
+
     uint16_t read_data;
-    // uint32_t y = 0;
-    // uint32_t x = 0;
-    // uint16_t *ptr = &vgaFramebuffer[0][0];
-
-    // flushDataCache(0);
-
-    // while (1) {
-    //     read_data = uart_read(UART);
-    //     read_data = (uart_read(UART) << 8) | read_data;
-    //     // uart_write(UART, read_data);
-
-    //     *ptr = read_data;
-    //     if (y < RES_Y && x < RES_X) ptr++;
-
-    //     x++;
-    //     if (x > RES_X) x = 0;
-        
-    //     y++;
-    //     if (y > RES_Y) {
-    //         y = 0;
-    //         x = 0;
-            
-    //         flushDataCache(0);
-    //         *ptr = &vgaFramebuffer[0][0];
-    //     }
-
     while(1){
         uint16_t *ptr = &vgaFramebuffer[0][0];
-        uint16_t tmp;
 
-        for(uint32_t y = 0;y < RES_Y;y++){
-            for(uint32_t x = 0;x < RES_X;x++){
-                // read_data = uart_read(UART);
-                // read_data = (uart_read(UART) << 8) | read_data;
-
-                read_data = uart_read(UART);                    // B
-                read_data = (read_data << 6) | uart_read(UART); // G
-                read_data = (read_data << 5) | uart_read(UART); // R
-
-                // divide green by half
-                // tmp = (read_data & 0x000007C0) >> 6;
-                // tmp = tmp << 5;
-                // read_data = read_data & !0x000007C0;
-                // read_data = read_data | tmp;
+        for(uint32_t y = 0;y < RES_Y/2;y++){
+            for(uint32_t x = 0;x < RES_X/2;x++){
+                read_data = uart_read(UART);
+                read_data = (uart_read(UART) << 8) | read_data;\
 
                 // uart_write(UART, read_data);
 
-                *ptr = read_data;
+                vgaFramebuffer[y][x] = read_data;
+                vgaFramebuffer[y + RES_Y/2][x] = read_data;
+                vgaFramebuffer[y][x + RES_X/2] = read_data;
+                vgaFramebuffer[y + RES_Y/2][x + RES_X/2] = read_data;
 
-                ptr++;
+                // *ptr = read_data;              
+                // ptr++;
             }
         }
         flushDataCache(0);
     }
-    // while(1) {}
+}
 
-    // OLD STUFF
+// OLD STUFF
     // uint32_t offset = 0;
     // uint16_t rgb_count = 0;
     // // while(1){
@@ -147,7 +116,6 @@ int main() {
     //     rgb_count++;
     // // }
     // while(1) {}
-}
 
 
 void irqCallback(){

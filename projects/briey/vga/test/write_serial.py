@@ -4,24 +4,23 @@ import os
 import time
 
 # Get img as bytes
-with open('images/pika.txt', 'r') as file:
+with open(sys.argv[1], 'r') as file:
     raw_data = file.read().rstrip("\r\n").replace('{', '').replace('}','')
 raw_data = raw_data.split(',')
 
 pixels = []
 for s in raw_data:
-    # pixels.append(int(s) & 0xFF)
-    # pixels.append(int(s) >> 8)
+    adjusted_green = ((int(s) & 0x7E0) >> 1) & 0x7E0    # extra shift to correct green channel
+    adjusted_s = (int(s) & 0xF81F) | adjusted_green
 
-    pixels.append(int(s) >> 11)             # blue
-    pixels.append((int(s) & 0x7C0) >> 6)    # green (extra '>> 1' for color-correction)
-    pixels.append(int(s) & 0x1F)            # red
+    pixels.append(adjusted_s & 0xFF)
+    pixels.append(adjusted_s >> 8)
+
+    # pixels.append(int(s) >> 11)             # blue
+    # pixels.append((int(s) & 0x7E0) >> 6)    # green (extra '>> 1' for color-correction)
+    # pixels.append(int(s) & 0x1F)            # red
 
 byte_pixels = bytearray(pixels)
-
-# for i in range(0, 4):
-#     print(bin(pixels[i]))
-# sys.exit()
 
 # Open serial port
 ser = serial.Serial()
@@ -46,7 +45,6 @@ ser.reset_output_buffer()
 time.sleep(1)
 
 ser.write(byte_pixels)
-# ser.read()
 
 ser.reset_input_buffer()
 ser.reset_output_buffer()
