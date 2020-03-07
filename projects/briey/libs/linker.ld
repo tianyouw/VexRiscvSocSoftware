@@ -25,7 +25,7 @@ ENTRY(crtStart)
 
 MEMORY {
   onChipRam : ORIGIN = 0x80000000, LENGTH = 32K
-  sdram : ORIGIN = 0x40000000, LENGTH = 128M
+  sdram : ORIGIN = 0x40000000, LENGTH = 64M
 }
 _stack_size = DEFINED(_stack_size) ? _stack_size : 2K;
 /*
@@ -34,7 +34,6 @@ _heap_size = 32M - _stack_size - SIZEOF(.noinit);
 */
 
 _memTree_size = 3 * LENGTH(sdram) / 4 ;  /* Size of mem. auth. tree */
-_heap_size = LENGTH(sdram) - _stack_size - _memTree_size - SIZEOF(.noinit);  /* Fill rest of SDRAM with heap */
 
 
 SECTIONS /*TODO don't initialize useless things,  restore literal loading that use 2 instruction in place of onChipRam word */
@@ -104,6 +103,7 @@ SECTIONS /*TODO don't initialize useless things,  restore literal loading that u
       . = ALIGN(4);    
   } > sdram
 
+_heap_size = LENGTH(sdram) - _stack_size - _memTree_size - SIZEOF(.noinit);  /* Fill rest of SDRAM with heap */
   ._user_heap (NOLOAD):
   {
     . = ALIGN(8);
