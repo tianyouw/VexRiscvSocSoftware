@@ -13,7 +13,7 @@ static volatile struct {
 	uint32_t nonce[WIDE_LEN];
 	uint32_t data[WIDE_LEN];
 	uint32_t tag[WIDE_LEN];
-} *const ASCON128_INTERFACE = (volatile void *) 0x40000000;
+} *const ASCON128_INTERFACE = (volatile void *) 0xE0000000;
 
 #define ASCON_CTRL_INIT (1U << 0)
 #define ASCON_CTRL_ASSOCIATE (1U << 1)
@@ -42,7 +42,9 @@ static void ascon_operation(struct ascon_param *param, uint32_t op, uint32_t op_
 {
 	size_t i;
 
-	ascon_memcpy(ASCON128_INTERFACE->key, param->key, sizeof(ASCON128_INTERFACE->key));
+	ascon_memcpy(ASCON128_INTERFACE->key, param->key_in, sizeof(ASCON128_INTERFACE->key));
+	ascon_memcpy(ASCON128_INTERFACE->nonce, param->nonce_in, sizeof(ASCON128_INTERFACE->nonce));
+
 	ASCON128_INTERFACE->control = ASCON_CTRL_INIT;
 
 	for (i = 0; i < param->associated_size; ++i) {
@@ -58,7 +60,7 @@ static void ascon_operation(struct ascon_param *param, uint32_t op, uint32_t op_
 		ASCON128_INTERFACE->control = (i == param->data_size - 1) ? op_final : op;
 	}
 	ascon_memcpy(param->data_out[i-1], ASCON128_INTERFACE->data, sizeof(param->data_in[i-1]));
-	ascon_memcpy(param->nonce, ASCON128_INTERFACE->nonce, sizeof(param->nonce));
+	ascon_memcpy(param->tag_out, ASCON128_INTERFACE->tag, sizeof(ASCON128_INTERFACE->tag));
 }
 
 void ascon_encrypt(struct ascon_param *param)
