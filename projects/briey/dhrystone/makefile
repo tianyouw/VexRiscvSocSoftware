@@ -2,10 +2,10 @@ PROJ_NAME=dhrystone
 DEBUG=no
 BENCH=no
 MULDIV=yes
+TREE=no
 
 
-
-CFLAGS += -fno-inline -fno-common 
+CFLAGS += -fno-inline -fno-common -g
 LDFLAGS += -lc
 
 CFLAGS +=  -DPREALLOCATE=1 -DHOST_DEBUG=0 -DMSC_CLOCK 
