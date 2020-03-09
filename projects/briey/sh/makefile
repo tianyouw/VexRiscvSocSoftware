@@ -9,10 +9,8 @@ TREE=no
 
 SRCS = $(wildcard ./*.S)
 
-LDSCRIPT = ../../../libs/linker.ld
-INC += -I../../../../../libs/
-INC += -I../../../libs/
-INC += -I../../inc/
+LDSCRIPT = ../libs/linker.ld
+INC += -I../libs/riscv_tests/
 
-include ../../../../../resources/gcc.mk
-include ../../../../../resources/subproject.mk
+include ../../../resources/gcc.mk
+include ../../../resources/subproject.mk
