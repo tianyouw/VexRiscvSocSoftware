@@ -7,8 +7,6 @@ MULDIV=no
 # run "make tree=no" to disable this
 TREE=no
 
-CFLAGS += -g
-
 SRCS = 	$(wildcard src/*.c)   \
         $(wildcard src/*.cpp) \
         $(wildcard src/*.S)   \
