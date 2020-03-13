@@ -9,8 +9,8 @@ Implementation of Ascon v1.2, an authenticated cipher
 http://ascon.iaik.tugraz.at/
 """
 
-debug = False
-debugpermutation = False
+debug = True
+debugpermutation = True
 
 # === Ascon encryption and decryption ===
 
@@ -32,7 +32,8 @@ def ascon_encrypt(key, nonce, associateddata, plaintext, variant="Ascon-128"):
     rate = 8 if variant == "Ascon-128" else 16   # bytes
 
     ascon_initialize(S, k, rate, a, b, key, nonce)
-    ascon_process_associated_data(S, b, rate, associateddata)
+    if debug: printstate(S, "i am a weeny:")
+    #ascon_process_associated_data(S, b, rate, associateddata)
     ciphertext = ascon_process_plaintext(S, b, rate, plaintext)
     tag = ascon_finalize(S, rate, a, key)
     return ciphertext + tag
@@ -131,7 +132,7 @@ def ascon_process_plaintext(S, b, rate, plaintext):
     returns the ciphertext (without tag), updates S
     """
     p_lastlen = len(plaintext) % rate
-    p_padding = to_bytes([0x80] + (rate-p_lastlen-1)*[0x00])
+    p_padding = to_bytes([])
     p_padded = plaintext + p_padding
 
     # first t-1 blocks
@@ -151,11 +152,11 @@ def ascon_process_plaintext(S, b, rate, plaintext):
     block = len(p_padded) - rate
     if rate == 8:
         S[0] ^= bytes_to_int(p_padded[block:block+8])
-        ciphertext += int_to_bytes(S[0], 8)[:p_lastlen]
+        ciphertext += int_to_bytes(S[0], 8)
     elif rate == 16:
         S[0] ^= bytes_to_int(p_padded[block:block+8])
         S[1] ^= bytes_to_int(p_padded[block+8:block+16])
-        ciphertext += (int_to_bytes(S[0], 8)[:min(8,p_lastlen)] + int_to_bytes(S[1], 8)[:max(0,p_lastlen-8)])
+        ciphertext += (int_to_bytes(S[0], 8) + int_to_bytes(S[1], 8))
     if debug: printstate(S, "process plaintext:")
     return ciphertext
 
@@ -220,8 +221,10 @@ def ascon_finalize(S, rate, a, key):
     returns the tag, updates S
     """
     assert(len(key) == 16)
+    if debug: printstate(S, "weeny hut junior:")
     S[rate/8+0] ^= bytes_to_int(key[0:8])
     S[rate/8+1] ^= bytes_to_int(key[8:16])
+    if debug: printstate(S, "super weeny hut junior:")
 
     ascon_permutation(S, a)
 
@@ -229,6 +232,7 @@ def ascon_finalize(S, rate, a, key):
     S[4] ^= bytes_to_int(key[8:16])
     tag = int_to_bytes(S[3], 8) + int_to_bytes(S[4], 8)
     if debug: printstate(S, "finalization:")
+    print('asdf', bytes_to_hex(tag))
     return tag
 
 
@@ -315,8 +319,9 @@ def main():
     key = args.key.decode("hex")
     nonce = zero_bytes(keysize)
     data = bytearray.fromhex("".join(c for c in sys.stdin.read() if c in string.hexdigits))
+    associated_data = args.associated_data.decode("hex")
 
-    processed = (args.encrypt or args.decrypt)(args.key, nonce, args.associated_data, data, args.variant)
+    processed = (args.encrypt or args.decrypt)(key, nonce, associated_data, data, args.variant)
     print(bytes_to_hex(processed))
 
     return 0
