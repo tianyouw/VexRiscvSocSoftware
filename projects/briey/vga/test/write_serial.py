@@ -25,7 +25,7 @@ byte_pixels = bytearray(pixels)
 # Open serial port
 ser = serial.Serial()
 ser.baudrate = 115200
-ser.port = 'COM3' #replace with your port name
+ser.port = '/dev/ttyUSB0' #replace with your port name
 ser.bytesize = serial.EIGHTBITS
 ser.stopbits = serial.STOPBITS_ONE
 ser.parity = serial.PARITY_ODD

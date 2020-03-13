@@ -3,14 +3,11 @@ DEBUG=no
 NO_OPT=yes
 BENCH=no
 MULDIV=no
-TREE=no
+TREE=yes
 
-
-SRCS = 	$(wildcard src/*.c) \
-	    $(wildcard src/*.cpp)  \
-	    $(wildcard src/*.S)   \
-        ../libs/stdlib.c    
-
+SRCS = 	$(wildcard src/*.c)   \
+	    $(wildcard src/*.cpp) \
+	    $(wildcard src/*.S)
 
 LDSCRIPT = ../libs/linker.ld
 INC += -I../../../libs/
