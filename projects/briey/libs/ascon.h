@@ -9,15 +9,18 @@
 
 typedef uint32_t ascon_key_t[WIDE_LEN];
 typedef uint32_t ascon_nonce_t[WIDE_LEN];
+typedef uint32_t ascon_tag_t[WIDE_LEN];
+typedef uint32_t ascon_data_block_t[WIDE_LEN];
 
 struct ascon_param {
-	ascon_key_t key;
-	const uint32_t *(associated[WIDE_LEN]);
+	ascon_key_t key_in;
+	ascon_nonce_t nonce_in;
+	ascon_data_block_t *associated;
 	size_t associated_size;
-	const uint32_t *(data_in[WIDE_LEN]);
+	ascon_data_block_t *data_in;
 	size_t data_size;
-	uint32_t *(data_out[WIDE_LEN]);
-	ascon_nonce_t nonce;
+	ascon_data_block_t *data_out;
+	ascon_tag_t tag_out;
 };
 
 int ascon_is_sane(void);

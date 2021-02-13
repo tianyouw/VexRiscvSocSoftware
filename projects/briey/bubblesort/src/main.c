@@ -46,9 +46,9 @@ void bubbleSort(uint32_t array[], uint32_t size) {
                 temp = array[j - 1];
                 array[j - 1] = array[j];
                 // Flush the cache after every write to throughly test the SDRAM
-                flushDataCache();
+                // flushDataCache();
                 array[j] = temp;
-                flushDataCache();
+                // flushDataCache();
            }
            iter++;
         }
@@ -80,10 +80,10 @@ void main() {
     for (;;) {
         halt = 1;
         // lb/sb are currently broken, let's copy by word for now
-        //memcpy(sortArray, inputArray, sizeof(uint32_t) * SORT_SIZE);
-        for (size_t i = 0; i < SORT_SIZE; i++) {
-            sortArray[i] = inputArray[i];
-        }
+        memcpy(sortArray, inputArray, sizeof(uint32_t) * SORT_SIZE);
+        // for (size_t i = 0; i < SORT_SIZE; i++) {
+        //     sortArray[i] = inputArray[i];
+        // }
 
         printf("Bubblesort BEGIN\r\n\r\n");
 

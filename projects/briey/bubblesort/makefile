@@ -1,11 +1,11 @@
 PROJ_NAME=bubblesort
 DEBUG=no
 NO_OPT=yes
-BENCH=no
+BENCH=yes
 MULDIV=no
 # "yes" enables tree mem test and tree zeroing
 # run "make tree=no" to disable this
-TREE=yes
+TREE=no
 
 SRCS = 	$(wildcard src/*.c)   \
         $(wildcard src/*.cpp) \

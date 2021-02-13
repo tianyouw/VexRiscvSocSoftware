@@ -74,7 +74,7 @@ $(OBJDIR)/%.o: %.cpp
 
 $(OBJDIR)/%.o: %.S
 	mkdir -p $(dir $@)
-	$(RISCV_CC) -c $(CFLAGS) -o $@ $^ -D__ASSEMBLY__=1
+	$(RISCV_CC) -c $(CFLAGS)  $(INC) -o $@ $^ -D__ASSEMBLY__=1
 
 $(OBJDIR):
 	mkdir -p $@
